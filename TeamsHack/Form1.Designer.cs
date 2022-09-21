@@ -35,9 +35,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(433, 25);
+            this.button1.Location = new System.Drawing.Point(495, 33);
+            this.button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(114, 35);
+            this.button1.Size = new System.Drawing.Size(130, 47);
             this.button1.TabIndex = 0;
             this.button1.Text = "Start Sharing";
             this.button1.UseVisualStyleBackColor = true;
@@ -46,30 +47,34 @@
             // checkedListBox1
             // 
             this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Location = new System.Drawing.Point(12, 12);
+            this.checkedListBox1.Location = new System.Drawing.Point(14, 16);
+            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(415, 418);
+            this.checkedListBox1.Size = new System.Drawing.Size(474, 554);
             this.checkedListBox1.TabIndex = 2;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(433, 66);
+            this.button2.Location = new System.Drawing.Point(495, 88);
+            this.button2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(114, 35);
+            this.button2.Size = new System.Drawing.Size(130, 47);
             this.button2.TabIndex = 3;
             this.button2.Text = "Stop Sharing";
             this.button2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(567, 446);
+            this.ClientSize = new System.Drawing.Size(648, 595);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.checkedListBox1);
             this.Controls.Add(this.button1);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.LocationChanged += new System.EventHandler(this.Form1_LocationChanged);
             this.ResumeLayout(false);
 
         }
