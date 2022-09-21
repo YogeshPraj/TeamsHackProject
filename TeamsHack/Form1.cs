@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OpenScreen.Core.Screenshot;
+using OpenScreen.Core.Server;
+using System;
+using System.Net;
 using System.Windows.Forms;
 
 namespace TeamsHack
 {
     public partial class Form1 : Form
     {
+        private StreamingServer _streamingServer;
+
         public Form1()
         {
             InitializeComponent();
+            ListWindows();
         }
 
         private void ListWindows()
@@ -28,7 +27,11 @@ namespace TeamsHack
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ListWindows();
+            var resolution = Resolution.Resolutions.OneThousandAndEightyP;
+            bool isDisplayCursor = true;
+
+            _streamingServer = StreamingServer.GetInstance(resolution, Fps.OneHundredAndTwenty, isDisplayCursor);
+            _streamingServer.Start(IPAddress.Parse("127.0.0.1"), 3030);
         }
     }
 }
