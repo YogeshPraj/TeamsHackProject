@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using TeamsHack;
 
 namespace OpenScreen.Core.Screenshot
 {
@@ -28,35 +29,39 @@ namespace OpenScreen.Core.Screenshot
             var rawImage = new Bitmap(screenSize.Width, screenSize.Height);
             var rawGraphics = Graphics.FromImage(rawImage);
                 
-            bool isNeedToScale = screenSize != requiredSize;
-
-            var image = rawImage;
-            var graphics = rawGraphics;
-
-            if (isNeedToScale)
-            { 
-                image = new Bitmap(requiredSize.Width, requiredSize.Height);
-                graphics = Graphics.FromImage(image);
-            }
+            var screenshot = rawImage;
 
             var source = new Rectangle(0, 0, screenSize.Width, screenSize.Height);
-            var destination = new Rectangle(0, 0, requiredSize.Width, requiredSize.Height);
+            var blackScreenImage = new Bitmap(screenSize.Width, screenSize.Height);
+
+
 
             while (true)
             {
+                var areas = Areas.GetAreas();
+
                 rawGraphics.CopyFromScreen(0, 0, 0, 0, screenSize);
+
+                // original image
+
+                
+                rawGraphics.SetClip(source);
+                foreach (Area area in areas)
+                {
+                    rawGraphics.ExcludeClip(area.GetRectangle());
+                }
+                
+                rawGraphics.FillRectangle(Brushes.Black, source);
+                // black image
+
+                
 
                 if (isDisplayCursor)
                 {
                     AddCursorToScreenshot(rawGraphics, source);
                 }
 
-                if (isNeedToScale)
-                {
-                    graphics.DrawImage(rawImage, destination, source, GraphicsUnit.Pixel);
-                }
-
-                yield return image;
+                yield return screenshot;
             }
         }
 

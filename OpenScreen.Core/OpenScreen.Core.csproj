@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Area.cs" />
+    <Compile Include="Areas.cs" />
     <Compile Include="Mjpeg\MjpegConstants.cs" />
     <Compile Include="Mjpeg\MjpegStream.cs" />
     <Compile Include="Mjpeg\MjpegWriter.cs" />

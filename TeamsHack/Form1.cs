@@ -33,5 +33,10 @@ namespace TeamsHack
             _streamingServer = StreamingServer.GetInstance(resolution, Fps.OneHundredAndTwenty, isDisplayCursor);
             _streamingServer.Start(IPAddress.Parse("127.0.0.1"), 3030);
         }
+
+        private void Form1_LocationChanged(object sender, EventArgs e)
+        {
+            Areas.SetArea(this.DesktopBounds);
+        }
     }
 }
