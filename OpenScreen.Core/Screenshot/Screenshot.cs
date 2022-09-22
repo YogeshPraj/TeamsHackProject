@@ -1,4 +1,6 @@
-﻿using OpenScreen.Core.Screenshot.WinFeatures;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using OpenScreen.Core.Screenshot.WinFeatures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -35,26 +37,29 @@ namespace OpenScreen.Core.Screenshot
             var blackScreenImage = new Bitmap(screenSize.Width, screenSize.Height);
 
 
-
             while (true)
             {
                 var areas = Areas.GetAreas();
 
                 rawGraphics.CopyFromScreen(0, 0, 0, 0, screenSize);
 
-                // original image
+                using (Image<Bgr, Byte> originalImage = rawImage.ToImage<Bgr, Byte>())
+                {
+                    using (var blurredImage = originalImage.SmoothBlur(12, 12))
+                    {
+                        screenshot = blurredImage.ToBitmap();
+                    }
+                }
 
-                
                 rawGraphics.SetClip(source);
+                
                 foreach (Area area in areas)
                 {
                     rawGraphics.ExcludeClip(area.GetRectangle());
                 }
                 
-                rawGraphics.FillRectangle(Brushes.Black, source);
-                // black image
-
-                
+                 //rawGraphics.FillRectangle(Brushes.Black, source);
+                rawGraphics.DrawImage(rawImage, new Rectangle(0, 0, screenSize.Width, screenSize.Height));
 
                 if (isDisplayCursor)
                 {
@@ -62,6 +67,7 @@ namespace OpenScreen.Core.Screenshot
                 }
 
                 yield return screenshot;
+
             }
         }
 
