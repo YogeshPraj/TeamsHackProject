@@ -15,7 +15,6 @@ namespace TeamsHack
         public string executablePath;
         public uint pid;
         public List<Area> areas = new List<Area>();
-        public int ZOrder;
         private bool _isChecked;
         public bool IsChecked
         {
@@ -218,10 +217,10 @@ namespace TeamsHack
                     X = screeRectangle.X,
                     Y = screeRectangle.Y,
                     Width = screeRectangle.Width,
-                    Height = screeRectangle.Height
-                });
+                    Height = screeRectangle.Height,
+                    ZOrder = zorder
+                }) ;
 
-                w.ZOrder = zorder;
             }
 
         }
