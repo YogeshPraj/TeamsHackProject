@@ -31,23 +31,37 @@ namespace OpenScreen.Core.Screenshot
             var rawGraphics = Graphics.FromImage(rawImage);
             var screenshot = rawImage;
             var source = new Rectangle(0, 0, screenSize.Width, screenSize.Height);
-
+            var result = screenshot;
             while (true)
             {
                 var areas = Areas.GetAreas();
+
+                //bottom to front
+                areas.Sort();
+                
                 rawGraphics.CopyFromScreen(0, 0, 0, 0, screenSize);
                 using (Image<Bgr, Byte> originalImage = rawImage.ToImage<Bgr, Byte>())
                 {
-                    using (var blurredImage = originalImage.SmoothBlur(12, 12))
+                    using (var blurredImage = originalImage.SmoothBlur(20, 20))
                     {
                         screenshot = blurredImage.ToBitmap();
                     }
-                    
-                    foreach (Area area in areas)
+
+                    result = (Bitmap)screenshot.Clone();
+                    using (Graphics grD = Graphics.FromImage(result))
                     {
-                        using (Graphics grD = Graphics.FromImage(screenshot))
+                        //foreach (Area area in areas)
+                        for (var i = 0; i< areas.Count; i++)
                         {
-                            grD.DrawImage(rawImage, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                            var area = areas[i];
+                            if (area.IsShared)
+                            {
+                                grD.DrawImage(rawImage, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                            }
+                            else
+                            {
+                                grD.DrawImage(screenshot, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                            }
                         }
                     }
                 }
@@ -57,7 +71,7 @@ namespace OpenScreen.Core.Screenshot
                     AddCursorToScreenshot(rawGraphics, source);
                 }
 
-                yield return screenshot;
+                yield return result;
 
             }
         }
