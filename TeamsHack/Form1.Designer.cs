@@ -35,10 +35,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(495, 33);
-            this.button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button1.Location = new System.Drawing.Point(1052, 68);
+            this.button1.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(130, 47);
+            this.button1.Size = new System.Drawing.Size(276, 96);
             this.button1.TabIndex = 0;
             this.button1.Text = "Start Sharing";
             this.button1.UseVisualStyleBackColor = true;
@@ -47,31 +47,33 @@
             // checkedListBox1
             // 
             this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Location = new System.Drawing.Point(14, 16);
-            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.checkedListBox1.Location = new System.Drawing.Point(30, 33);
+            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(474, 554);
+            this.checkedListBox1.Size = new System.Drawing.Size(1003, 1104);
             this.checkedListBox1.TabIndex = 2;
+            this.checkedListBox1.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBox1_ItemCheck);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(495, 88);
-            this.button2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button2.Location = new System.Drawing.Point(1052, 180);
+            this.button2.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(130, 47);
+            this.button2.Size = new System.Drawing.Size(276, 96);
             this.button2.TabIndex = 3;
             this.button2.Text = "Stop Sharing";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(17F, 41F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(648, 595);
+            this.ClientSize = new System.Drawing.Size(1377, 1220);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.checkedListBox1);
             this.Controls.Add(this.button1);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.Name = "Form1";
             this.Text = "Form1";
             this.LocationChanged += new System.EventHandler(this.Form1_LocationChanged);

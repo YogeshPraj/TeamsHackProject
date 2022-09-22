@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 
 namespace TeamsHack
@@ -13,6 +15,26 @@ namespace TeamsHack
         public string title;
         public string executablePath;
         public uint pid;
+        public Area area;
+
+        public void SetArea(Rect rect, int z)
+        {
+            area = Area.FromRectangle(new Rectangle(rect.Left, rect.Bottom, rect.Right - rect.Left, rect.Bottom - rect.Top));
+            area.Z = z;
+        }
+
+        public override string ToString()
+        {
+            return $"{title}  [{executablePath}]";
+        }
+    }
+
+    public struct Rect
+    {
+        public int Left { get; set; }
+        public int Top { get; set; }
+        public int Right { get; set; }
+        public int Bottom { get; set; }
     }
 
     public class DesktopWindow
@@ -52,6 +74,8 @@ namespace TeamsHack
         [DllImport("user32.Dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         protected static extern bool EnumChildWindows(IntPtr parentHandle, EnumWindowsProc callback, IntPtr lParam);
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
 
         [DllImport("kernel32.dll")]
         private static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, bool bInheritHandle, int dwProcessId);
@@ -169,13 +193,18 @@ namespace TeamsHack
         {
             List<Window> windows = new List<Window>();
             EnumDesktopWindows(IntPtr.Zero, new EnumWindowsProc(EnumWindowsList), IntPtr.Zero);
+            int i = 0;
             foreach (var w in WindowsList)
             {
                 if ((w.executablePath = GetExecutablePath(w.hWnd, w.pid)) != "")
                 {
+                    var rect = new Rect();
+                    GetWindowRect(w.hWnd, ref rect);
+                    w.SetArea(rect, i--);
                     windows.Add(w);
                 }
             }
+            
 
             return windows;
         }
