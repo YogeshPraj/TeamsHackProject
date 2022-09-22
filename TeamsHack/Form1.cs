@@ -34,13 +34,15 @@ namespace TeamsHack
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var selectedWindows = SelectedWindows();
-            DesktopWindow.PopulateArea(selectedWindows);
+            // var selectedWindows = SelectedWindows();
+            // DesktopWindow.PopulateArea(selectedWindows);
 
             Areas.areas.Clear();
-            foreach (var item in selectedWindows)
+            foreach (var item in _windows)
             {
-                Areas.areas.AddRange(item.areas);
+                Area areaToAdd = item.areas.FirstOrDefault();
+                areaToAdd.IsShared = item.IsChecked;
+                Areas.areas.Add(areaToAdd);
             }
 
             var resolution = Resolution.Resolutions.OneThousandAndEightyP;

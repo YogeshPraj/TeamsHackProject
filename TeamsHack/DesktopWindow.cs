@@ -195,7 +195,7 @@ namespace TeamsHack
             {
                 if ((w.executablePath = GetExecutablePath(w.hWnd, w.pid)) != "")
                 {
-
+                    PopulateArea(new List<Window>() { w });
                     windows.Add(w);
                 }
             }
