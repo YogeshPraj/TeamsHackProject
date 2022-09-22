@@ -1,10 +1,13 @@
-﻿using OpenScreen.Core.Screenshot.WinFeatures;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using OpenScreen.Core.Screenshot.WinFeatures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TeamsHack;
+using static Emgu.CV.Text.TextDetectorCNN;
 
 namespace OpenScreen.Core.Screenshot
 {
@@ -24,44 +27,60 @@ namespace OpenScreen.Core.Screenshot
         {
             var screenSize = new Size(Screen.PrimaryScreen.Bounds.Width,
                 Screen.PrimaryScreen.Bounds.Height);
-            var requiredSize = Resolution.GetResolutionSize(requiredResolution);
-
             var rawImage = new Bitmap(screenSize.Width, screenSize.Height);
             var rawGraphics = Graphics.FromImage(rawImage);
-                
             var screenshot = rawImage;
-
             var source = new Rectangle(0, 0, screenSize.Width, screenSize.Height);
-            var blackScreenImage = new Bitmap(screenSize.Width, screenSize.Height);
-
-
-
+            var result = screenshot;
             while (true)
             {
                 var areas = Areas.GetAreas();
 
+                //bottom to front
+                areas.Sort();
+                
                 rawGraphics.CopyFromScreen(0, 0, 0, 0, screenSize);
-
-                // original image
-
-                
-                rawGraphics.SetClip(source);
-                foreach (Area area in areas)
+                using (Image<Bgr, Byte> originalImage = rawImage.ToImage<Bgr, Byte>())
                 {
-                    rawGraphics.ExcludeClip(area.GetRectangle());
-                }
-                
-                rawGraphics.FillRectangle(Brushes.Black, source);
-                // black image
+                    using (var blurredImage = originalImage.SmoothBlur(20, 20))
+                    {
+                        screenshot = blurredImage.ToBitmap();
+                    }
 
-                
+                    result = (Bitmap)screenshot.Clone();
+                    using (Graphics grD = Graphics.FromImage(result))
+                    {
+                        //foreach (Area area in areas)
+                        for (var i = 0; i< areas.Count; i++)
+                        {
+                            var area = areas[i];
+                            if (area.IsShared)
+                            {
+                                grD.DrawImage(rawImage, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                            }
+                            else
+                            {
+                                grD.DrawImage(screenshot, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                            }
+                        }
+                    }
+                }
 
                 if (isDisplayCursor)
                 {
                     AddCursorToScreenshot(rawGraphics, source);
                 }
 
-                yield return screenshot;
+                yield return result;
+
+            }
+        }
+
+        public static void CopyRegionIntoImage(Bitmap srcBitmap, Rectangle srcRegion, ref Bitmap destBitmap, Rectangle destRegion)
+        {
+            using (Graphics grD = Graphics.FromImage(destBitmap))
+            {
+                grD.DrawImage(srcBitmap, destRegion, srcRegion, GraphicsUnit.Pixel);
             }
         }
 

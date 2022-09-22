@@ -34,6 +34,15 @@ namespace TeamsHack
 
         private void button1_Click(object sender, EventArgs e)
         {
+            var selectedWindows = SelectedWindows();
+            DesktopWindow.PopulateArea(selectedWindows);
+
+            Areas.areas.Clear();
+            foreach (var item in selectedWindows)
+            {
+                Areas.areas.AddRange(item.areas);
+            }
+
             var resolution = Resolution.Resolutions.OneThousandAndEightyP;
             bool isDisplayCursor = true;
 
@@ -46,23 +55,9 @@ namespace TeamsHack
             Areas.SetArea(this.DesktopBounds);
         }
 
-        private Window[] SelectedWindows()
+        private IList<Window> SelectedWindows()
         {
-             return _windows.Where(w => w.IsChecked).ToArray();
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            var window = SelectedWindows().FirstOrDefault();
-
-            var image = WindowSnapshotHelper.MakeSnapshot(window.hWnd, false, Win32API.WindowShowStyle.Restore);
-
-            string filePath = "C:\\Temp\\temp1.jpg";
-
-            if (image != null)
-            {
-                image.Save(filePath, ImageFormat.Jpeg);
-            }
+             return _windows.Where(w => w.IsChecked).ToList();
         }
 
         private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)

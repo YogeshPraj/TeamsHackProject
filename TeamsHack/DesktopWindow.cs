@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -13,10 +14,14 @@ namespace TeamsHack
         public string title;
         public string executablePath;
         public uint pid;
-
+        public List<Area> areas = new List<Area>();
+        public int ZOrder;
         private bool _isChecked;
-        public bool IsChecked { get { return _isChecked; } 
-            set { _isChecked = value; } }
+        public bool IsChecked
+        {
+            get { return _isChecked; }
+            set { _isChecked = value; }
+        }
 
         public string DisplayText
         {
@@ -50,6 +55,11 @@ namespace TeamsHack
         }
 
         [DllImport("user32.dll")]
+        private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+        [DllImport("user32.dll")]
+        private static extern bool GetWindowRect(IntPtr handle, ref Rectangle screenRectangle);
+
+        [DllImport("user32.dll")]
         protected static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumWindowsProc enumProc, IntPtr lParam);
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         protected static extern int GetWindowTextLength(IntPtr hWnd);
@@ -74,7 +84,7 @@ namespace TeamsHack
 
         protected delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
-   
+
         private static bool EnumWindowsList(IntPtr hWnd, IntPtr lParam)
         {
             int size = GetWindowTextLength(hWnd);
@@ -186,11 +196,59 @@ namespace TeamsHack
             {
                 if ((w.executablePath = GetExecutablePath(w.hWnd, w.pid)) != "")
                 {
+
                     windows.Add(w);
                 }
             }
 
             return windows;
+        }
+
+        public static void PopulateArea(IList<Window> windows)
+        {
+            foreach (var w in windows)
+            {
+                var screeRectangle = new Rectangle();
+                int zorder = 0;
+                GetWindowRect(w.hWnd, ref screeRectangle);
+                GetWindowZOrder(w.hWnd, out zorder);
+
+                w.areas.Add(new Area()
+                {
+                    X = screeRectangle.X,
+                    Y = screeRectangle.Y,
+                    Width = screeRectangle.Width,
+                    Height = screeRectangle.Height
+                });
+
+                w.ZOrder = zorder;
+            }
+
+        }
+
+        public static bool GetWindowZOrder(IntPtr hwnd, out int zOrder)
+        {
+            const uint GW_HWNDPREV = 3;
+            const uint GW_HWNDLAST = 1;
+
+            var lowestHwnd = GetWindow(hwnd, GW_HWNDLAST);
+
+            var z = 0;
+            var hwndTmp = lowestHwnd;
+            while (hwndTmp != IntPtr.Zero)
+            {
+                if (hwnd == hwndTmp)
+                {
+                    zOrder = z;
+                    return true;
+                }
+
+                hwndTmp = GetWindow(hwndTmp, GW_HWNDPREV);
+                z++;
+            }
+
+            zOrder = int.MinValue;
+            return false;
         }
     }
 }
