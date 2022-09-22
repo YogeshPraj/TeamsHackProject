@@ -13,6 +13,18 @@ namespace TeamsHack
         public string title;
         public string executablePath;
         public uint pid;
+
+        private bool _isChecked;
+        public bool IsChecked { get { return _isChecked; } 
+            set { _isChecked = value; } }
+
+        public string DisplayText
+        {
+            get
+            {
+                return title + " [" + executablePath + "]";
+            }
+        }
     }
 
     public class DesktopWindow
@@ -62,6 +74,7 @@ namespace TeamsHack
 
         protected delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
+   
         private static bool EnumWindowsList(IntPtr hWnd, IntPtr lParam)
         {
             int size = GetWindowTextLength(hWnd);
