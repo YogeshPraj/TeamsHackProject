@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TeamsHack;
+using static Emgu.CV.Text.TextDetectorCNN;
 
 namespace OpenScreen.Core.Screenshot
 {
@@ -26,40 +27,30 @@ namespace OpenScreen.Core.Screenshot
         {
             var screenSize = new Size(Screen.PrimaryScreen.Bounds.Width,
                 Screen.PrimaryScreen.Bounds.Height);
-            var requiredSize = Resolution.GetResolutionSize(requiredResolution);
-
             var rawImage = new Bitmap(screenSize.Width, screenSize.Height);
             var rawGraphics = Graphics.FromImage(rawImage);
-                
             var screenshot = rawImage;
-
             var source = new Rectangle(0, 0, screenSize.Width, screenSize.Height);
-            var blackScreenImage = new Bitmap(screenSize.Width, screenSize.Height);
-
 
             while (true)
             {
                 var areas = Areas.GetAreas();
-
                 rawGraphics.CopyFromScreen(0, 0, 0, 0, screenSize);
-
                 using (Image<Bgr, Byte> originalImage = rawImage.ToImage<Bgr, Byte>())
                 {
                     using (var blurredImage = originalImage.SmoothBlur(12, 12))
                     {
                         screenshot = blurredImage.ToBitmap();
                     }
+                    
+                    foreach (Area area in areas)
+                    {
+                        using (Graphics grD = Graphics.FromImage(screenshot))
+                        {
+                            grD.DrawImage(rawImage, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                        }
+                    }
                 }
-
-                rawGraphics.SetClip(source);
-                
-                foreach (Area area in areas)
-                {
-                    rawGraphics.ExcludeClip(area.GetRectangle());
-                }
-                
-                 //rawGraphics.FillRectangle(Brushes.Black, source);
-                rawGraphics.DrawImage(rawImage, new Rectangle(0, 0, screenSize.Width, screenSize.Height));
 
                 if (isDisplayCursor)
                 {
@@ -68,6 +59,14 @@ namespace OpenScreen.Core.Screenshot
 
                 yield return screenshot;
 
+            }
+        }
+
+        public static void CopyRegionIntoImage(Bitmap srcBitmap, Rectangle srcRegion, ref Bitmap destBitmap, Rectangle destRegion)
+        {
+            using (Graphics grD = Graphics.FromImage(destBitmap))
+            {
+                grD.DrawImage(srcBitmap, destRegion, srcRegion, GraphicsUnit.Pixel);
             }
         }
 
