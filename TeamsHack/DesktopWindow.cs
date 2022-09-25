@@ -1,10 +1,14 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TeamsHack
 {
@@ -34,6 +38,7 @@ namespace TeamsHack
     public class DesktopWindow
     {
         static List<Window> WindowsList = new List<Window>();
+        static System.Windows.Forms.Timer _positionTrackerTimer = null;
 
         [Flags]
         public enum ProcessAccessFlags : uint
@@ -74,15 +79,14 @@ namespace TeamsHack
         [return: MarshalAs(UnmanagedType.Bool)]
         protected static extern bool EnumChildWindows(IntPtr parentHandle, EnumWindowsProc callback, IntPtr lParam);
 
+        protected delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
         [DllImport("kernel32.dll")]
         private static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, bool bInheritHandle, int dwProcessId);
         [DllImport("kernel32.dll")]
         private static extern bool QueryFullProcessImageName(IntPtr hprocess, int dwFlags, StringBuilder lpExeName, out int size);
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool CloseHandle(IntPtr hHandle);
-
-        protected delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
 
         private static bool EnumWindowsList(IntPtr hWnd, IntPtr lParam)
         {
@@ -216,15 +220,50 @@ namespace TeamsHack
                 {
                     X = screeRectangle.X,
                     Y = screeRectangle.Y,
-                    Width = screeRectangle.Width,
-                    Height = screeRectangle.Height,
-                    ZOrder = zorder
+                    Width = screeRectangle.Width - screeRectangle.X,
+                    Height = screeRectangle.Height - screeRectangle.Y,
+                    Z = zorder
                 }) ;
 
             }
 
         }
 
+        public static void StartPositionTracker()
+        {
+            _positionTrackerTimer = new System.Windows.Forms.Timer();
+            _positionTrackerTimer.Interval = 1000; // 1 second
+            _positionTrackerTimer.Tick += _positionTrackerTimer_Tick;
+            _positionTrackerTimer.Enabled = true;
+            _positionTrackerTimer.Start();
+            
+        }
+
+        private static void _positionTrackerTimer_Tick(object sender, EventArgs e)
+        {
+            foreach (var wArea in Areas.areas)
+            {
+                var screeRectangle = new Rectangle();
+                int zorder = 0;
+                GetWindowRect(wArea.Hwnd, ref screeRectangle);
+                GetWindowZOrder(wArea.Hwnd, out zorder);
+                
+                wArea.X = screeRectangle.X;
+                wArea.Y = screeRectangle.Y;
+                wArea.Width = screeRectangle.Width - screeRectangle.X;
+                wArea.Height = screeRectangle.Height - screeRectangle.Y;
+                wArea.Z = zorder;
+            }
+        }
+
+        public static void StopPositionTracker()
+        {
+            _positionTrackerTimer.Stop();
+            _positionTrackerTimer.Dispose();
+            _positionTrackerTimer = null;
+        }
+
+     
         public static bool GetWindowZOrder(IntPtr hwnd, out int zOrder)
         {
             const uint GW_HWNDPREV = 3;

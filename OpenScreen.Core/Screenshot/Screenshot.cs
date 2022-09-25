@@ -58,10 +58,10 @@ namespace OpenScreen.Core.Screenshot
                             {
                                 grD.DrawImage(rawImage, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
                             }
-                            else
-                            {
-                                grD.DrawImage(screenshot, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
-                            }
+                            //else
+                            //{
+                            //    grD.DrawImage(screenshot, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                            //}
                         }
                     }
                 }
@@ -83,6 +83,7 @@ namespace OpenScreen.Core.Screenshot
                 grD.DrawImage(srcBitmap, destRegion, srcRegion, GraphicsUnit.Pixel);
             }
         }
+
 
         /// <summary>
         /// Provides enumeration of screenshots of a specific application window.

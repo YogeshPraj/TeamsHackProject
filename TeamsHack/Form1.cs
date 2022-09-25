@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+using static OpenScreen.Core.Screenshot.Resolution;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace TeamsHack
@@ -34,13 +35,14 @@ namespace TeamsHack
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // var selectedWindows = SelectedWindows();
+            var selectedWindows = SelectedWindows();
             // DesktopWindow.PopulateArea(selectedWindows);
 
             Areas.areas.Clear();
-            foreach (var item in _windows)
+            foreach (var item in selectedWindows)
             {
                 Area areaToAdd = item.areas.FirstOrDefault();
+                areaToAdd.Hwnd = item.hWnd;
                 areaToAdd.IsShared = item.IsChecked;
                 Areas.areas.Add(areaToAdd);
             }
@@ -50,6 +52,8 @@ namespace TeamsHack
 
             _streamingServer = StreamingServer.GetInstance(resolution, Fps.OneHundredAndTwenty, isDisplayCursor);
             _streamingServer.Start(IPAddress.Parse("127.0.0.1"), 3030);
+
+            DesktopWindow.StartPositionTracker();
         }
 
         private void Form1_LocationChanged(object sender, EventArgs e)
@@ -68,6 +72,13 @@ namespace TeamsHack
              
             var windowObj = list.ElementAt(e.Index);
             windowObj.IsChecked = e.NewValue == CheckState.Checked;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            DesktopWindow.StopPositionTracker();
+            _streamingServer.Stop();
+            Areas.areas.Clear();
         }
     }
 }
