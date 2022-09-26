@@ -35,7 +35,7 @@ namespace TeamsHack
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var selectedWindows = SelectedWindows();
+            var selectedWindows = _windows;
             // DesktopWindow.PopulateArea(selectedWindows);
 
             Areas.areas.Clear();

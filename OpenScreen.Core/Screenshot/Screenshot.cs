@@ -58,10 +58,10 @@ namespace OpenScreen.Core.Screenshot
                             {
                                 grD.DrawImage(rawImage, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
                             }
-                            //else
-                            //{
-                            //    grD.DrawImage(screenshot, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
-                            //}
+                            else
+                            {
+                                grD.DrawImage(screenshot, area.GetRectangle(), area.GetRectangle(), GraphicsUnit.Pixel);
+                            }
                         }
                     }
                 }
