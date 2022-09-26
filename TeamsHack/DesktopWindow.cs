@@ -232,7 +232,7 @@ namespace TeamsHack
         public static void StartPositionTracker()
         {
             _positionTrackerTimer = new System.Windows.Forms.Timer();
-            _positionTrackerTimer.Interval = 1000; // 1 second
+            _positionTrackerTimer.Interval = 10; 
             _positionTrackerTimer.Tick += _positionTrackerTimer_Tick;
             _positionTrackerTimer.Enabled = true;
             _positionTrackerTimer.Start();
