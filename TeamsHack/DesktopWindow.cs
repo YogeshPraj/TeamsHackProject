@@ -241,8 +241,9 @@ namespace TeamsHack
 
         private static void _positionTrackerTimer_Tick(object sender, EventArgs e)
         {
-            foreach (var wArea in Areas.areas)
+            for (var i=0; i<Areas.areas.Count; i++)
             {
+                var wArea = Areas.areas[i];
                 var screeRectangle = new Rectangle();
                 int zorder = 0;
                 GetWindowRect(wArea.Hwnd, ref screeRectangle);
